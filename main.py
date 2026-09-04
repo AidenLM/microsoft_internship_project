@@ -28,18 +28,25 @@ def extract_answer(message):
     return message.parts[-1].text
 
 
-def hello_model():
+def chat():
     manager = FoundryLocalManager(Configuration(app_name="local-rag-assistant"))
     model = load_model(manager)
 
+    print(f"Chatting with {MODEL_ALIAS}. Type 'exit' to quit.\n")
+
     with ChatSession(model) as session:
-        request = Request().add_item(MessageItem.user("Hello, world"))
-        with session.process_request(request) as response:
-            print(extract_answer(response.get_item(0)))
+        while True:
+            question = input("you> ").strip()
+            if not question or question.lower() in ("exit", "quit"):
+                break
+
+            request = Request().add_item(MessageItem.user(question))
+            with session.process_request(request) as response:
+                print(f"model> {extract_answer(response.get_item(0))}\n")
 
 
 def main():
-    hello_model()
+    chat()
 
 
 if __name__ == "__main__":
