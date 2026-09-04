@@ -42,12 +42,12 @@ Once it's installed, run:
 python main.py
 ```
 
-This loads a small model (`qwen3-0.6b` by default) and sends it a test
-prompt, just to confirm the local runtime is working before building the
-actual RAG pipeline on top of it. Went with a 0.6B model here instead of
-something like phi-3.5-mini mainly because it's lighter on RAM and answers
-in a couple seconds - good enough for a sanity check. Worth trying a bigger
-chat model later once the pipeline itself works, if the machine can handle it.
+This drops you into a simple chat loop with `qwen3-4b` running locally -
+type a question, get an answer, `exit` to quit. Started out testing with
+qwen3-0.6b since it's tiny and fast, but the answers were noticeably worse
+(got basic facts wrong). qwen3-4b is close in size to phi-3.5-mini and
+gives much better answers without issues on this machine, so that's the
+default for now.
 
 ## Why Foundry Local + SQLite
 
