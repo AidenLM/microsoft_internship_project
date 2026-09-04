@@ -15,7 +15,7 @@ Week 1 - setting up Foundry Local and the project skeleton.
 
 - [x] Repo + basic project structure
 - [x] Foundry Local installed and "hello model" test working
-- [ ] Embeddings + SQLite storage
+- [x] Embeddings + SQLite storage
 - [ ] Ingestion pipeline (chunking + embedding + storing documents)
 - [ ] Retrieval function (top-k relevant chunks for a query)
 - [ ] LLM integration (answer_query)
@@ -55,6 +55,13 @@ Foundry Local handles running the LLM (and the embedding model) locally, with
 no cloud dependency. SQLite is just a single file, so it's an easy way to
 store document chunks and their embedding vectors without needing a real
 database server - fine for the small document sets this project targets.
+
+`db.py` has the storage/search logic (SQLite table + cosine similarity
+search over all stored chunks - fine at this scale, wouldn't scale to a huge
+document set but that's not what this project needs). `demo_search.py` is a
+small script that stores a few sample sentences and searches them, mostly
+just to prove the embedding + SQLite + cosine similarity pipeline actually
+works end to end before building the real ingestion pipeline on top of it.
 
 ## Reference
 

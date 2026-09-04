@@ -94,3 +94,23 @@ vectors would score as "maximally similar"). Backwards. Cosine similarity
 also only cares about the *direction* of the vectors, not their length/
 magnitude - which is what we want, since we care about the direction of
 the meaning, not how "strong" the raw vector happens to be.
+
+**SQLite doesn't have a vector type, so we store embeddings as BLOB.**
+`numpy_array.astype(np.float32).tobytes()` going in, `np.frombuffer(blob,
+dtype=np.float32)` coming back out. Table is just
+`(id, source, content, embedding)`. Search itself isn't done in SQL - we
+pull every row back into Python and compute cosine similarity against the
+query embedding there, then sort and take the top few. That only works
+because our document set is small (a handful of chunks); a real large-scale
+system would need a proper vector index instead of comparing against every
+row one by one.
+
+Tested the whole pipeline (store 4 sample sentences -> embed a query ->
+search) and the ranking mostly made sense, but wasn't perfect - a sentence
+that only vaguely related to the query outranked one that was more directly
+about it. Scores were also fairly close together (0.51-0.55 for the top
+two). Takeaway: embedding similarity is a strong signal, not a perfect
+oracle - this is why RAG pulls back top-k (2-3) chunks instead of just the
+single best match, and why real document chunks (a paragraph of actual
+content) will likely rank better than short, generic one-line sentences
+like the ones we used for this quick test.
