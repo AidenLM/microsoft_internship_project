@@ -166,3 +166,13 @@ return a fixed "I don't have information about that" message. This is more
 reliable than relying on the model to police itself. Lesson: for anything
 where wrong answers actually matter, don't just trust an instruction in the
 prompt - add an explicit check in code wherever you can.
+
+**Added a second document to see if the pipeline generalizes**, not just
+works on the one document it was built and tuned against. Wrote a short
+piece on agentic coding / vibe coding, ran it through `ingest.py` alongside
+the project plan (102 chunks total now, from two different documents), and
+asked questions specific to it. "What's the difference between vibe coding
+and agentic coding" scored 0.90-0.91 similarity and got a correct, well
+grounded answer - actually higher scores than we saw on the project plan
+document. Good sign that the pipeline isn't overfit to one specific piece
+of text.

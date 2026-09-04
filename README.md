@@ -70,10 +70,10 @@ works end to end before building the real ingestion pipeline on top of it.
 
 ## Ingestion & retrieval
 
-`docs/` holds the source documents (currently just the original project
-plan, saved as plain text). `ingest.py` reads every `.txt` file in there,
-splits it into chunks (one paragraph/bullet per chunk), embeds each one, and
-stores it in `documents.db`:
+`docs/` holds the source documents: the original project plan, and a short
+write-up on agentic coding / vibe coding. `ingest.py` reads every `.txt`
+file in there, splits it into chunks (one paragraph/bullet per chunk),
+embeds each one, and stores it in `documents.db`:
 
 ```bash
 python ingest.py
@@ -88,7 +88,9 @@ python retrieval.py "What is RAG?"
 Real document chunks score noticeably better than the short one-line test
 sentences from `demo_search.py` - asking "What is RAG?" against the actual
 project plan returns the two paragraphs that directly define RAG, both
-above 0.79 similarity.
+above 0.79 similarity. Same with the vibe coding doc - "difference between
+vibe coding and agentic coding" scores above 0.90 against the paragraph
+that actually explains that distinction.
 
 ## Reference
 
