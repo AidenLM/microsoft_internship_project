@@ -114,3 +114,25 @@ oracle - this is why RAG pulls back top-k (2-3) chunks instead of just the
 single best match, and why real document chunks (a paragraph of actual
 content) will likely rank better than short, generic one-line sentences
 like the ones we used for this quick test.
+
+## Week 3
+
+**Real document chunks retrieve much better than short test sentences.**
+Ran the actual project plan document through `ingest.py` (93 paragraph/
+bullet-level chunks) and asked `retrieval.py` "What is RAG?" - the top two
+results came back at 0.81 and 0.80 similarity, and were exactly the two
+paragraphs in the document that directly define RAG. Compare that to the
+demo in Week 2 where similarity scores for one-line test sentences were
+only around 0.51-0.55 and the ranking wasn't quite right. Confirms what we
+guessed earlier: embeddings work a lot better on chunks with real, specific
+content (a full paragraph) than on short, generic sentences - there's just
+more signal for the model to work with.
+
+**Chunking strategy ended up being "one paragraph per chunk."** The source
+document, once cleaned up from the .docx export, was already naturally one
+paragraph or bullet point per line. So `chunk_document()` just splits on
+newlines and drops anything under ~30 characters (section headers, stray
+blank lines - not worth embedding on their own). Didn't need any fancier
+splitting logic for a document this size, though a longer document without
+clear paragraph breaks would probably need real sentence/token-based
+chunking instead.

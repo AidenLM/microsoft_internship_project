@@ -16,8 +16,8 @@ Week 1 - setting up Foundry Local and the project skeleton.
 - [x] Repo + basic project structure
 - [x] Foundry Local installed and "hello model" test working
 - [x] Embeddings + SQLite storage
-- [ ] Ingestion pipeline (chunking + embedding + storing documents)
-- [ ] Retrieval function (top-k relevant chunks for a query)
+- [x] Ingestion pipeline (chunking + embedding + storing documents)
+- [x] Retrieval function (top-k relevant chunks for a query)
 - [ ] LLM integration (answer_query)
 - [ ] CLI interface
 - [ ] Test cases + docs
@@ -62,6 +62,28 @@ document set but that's not what this project needs). `demo_search.py` is a
 small script that stores a few sample sentences and searches them, mostly
 just to prove the embedding + SQLite + cosine similarity pipeline actually
 works end to end before building the real ingestion pipeline on top of it.
+
+## Ingestion & retrieval
+
+`docs/` holds the source documents (currently just the original project
+plan, saved as plain text). `ingest.py` reads every `.txt` file in there,
+splits it into chunks (one paragraph/bullet per chunk), embeds each one, and
+stores it in `documents.db`:
+
+```bash
+python ingest.py
+```
+
+`retrieval.py` embeds a question and returns the top-k most similar chunks:
+
+```bash
+python retrieval.py "What is RAG?"
+```
+
+Real document chunks score noticeably better than the short one-line test
+sentences from `demo_search.py` - asking "What is RAG?" against the actual
+project plan returns the two paragraphs that directly define RAG, both
+above 0.79 similarity.
 
 ## Reference
 
