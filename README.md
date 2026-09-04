@@ -14,7 +14,7 @@ inference time.
 Week 1 - setting up Foundry Local and the project skeleton.
 
 - [x] Repo + basic project structure
-- [ ] Foundry Local installed and "hello model" test working
+- [x] Foundry Local installed and "hello model" test working
 - [ ] Embeddings + SQLite storage
 - [ ] Ingestion pipeline (chunking + embedding + storing documents)
 - [ ] Retrieval function (top-k relevant chunks for a query)
@@ -42,9 +42,12 @@ Once it's installed, run:
 python main.py
 ```
 
-This loads a small model (`phi-3.5-mini` by default) and sends it a test
+This loads a small model (`qwen3-0.6b` by default) and sends it a test
 prompt, just to confirm the local runtime is working before building the
-actual RAG pipeline on top of it.
+actual RAG pipeline on top of it. Went with a 0.6B model here instead of
+something like phi-3.5-mini mainly because it's lighter on RAM and answers
+in a couple seconds - good enough for a sanity check. Worth trying a bigger
+chat model later once the pipeline itself works, if the machine can handle it.
 
 ## Why Foundry Local + SQLite
 

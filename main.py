@@ -1,24 +1,41 @@
-from foundry_local import FoundryLocalManager
-from openai import OpenAI
+from foundry_local_sdk import (
+    ChatSession,
+    Configuration,
+    FoundryLocalManager,
+    MessageItem,
+    Request,
+    TextItemType,
+)
 
-MODEL_ALIAS = "phi-3.5-mini"
+MODEL_ALIAS = "qwen3-0.6b"
 
 
-def get_client():
-    manager = FoundryLocalManager(MODEL_ALIAS)
-    client = OpenAI(base_url=manager.endpoint, api_key=manager.api_key)
-    return client, manager
+def load_model(manager):
+    model = manager.catalog.get_model(MODEL_ALIAS)
+    if model is None:
+        raise RuntimeError(f"Model '{MODEL_ALIAS}' not found in catalog")
+    if not model.is_cached:
+        print(f"Downloading {MODEL_ALIAS}, this only happens once...")
+        model.download()
+    model.load()
+    return model
+
+
+def extract_answer(message):
+    for part in message.parts:
+        if getattr(part, "type", None) == TextItemType.DEFAULT:
+            return part.text
+    return message.parts[-1].text
 
 
 def hello_model():
-    client, manager = get_client()
-    model_id = manager.get_model_info(MODEL_ALIAS).id
+    manager = FoundryLocalManager(Configuration(app_name="local-rag-assistant"))
+    model = load_model(manager)
 
-    response = client.chat.completions.create(
-        model=model_id,
-        messages=[{"role": "user", "content": "Hello, world"}],
-    )
-    print(response.choices[0].message.content)
+    with ChatSession(model) as session:
+        request = Request().add_item(MessageItem.user("Hello, world"))
+        with session.process_request(request) as response:
+            print(extract_answer(response.get_item(0)))
 
 
 def main():
