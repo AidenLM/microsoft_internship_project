@@ -203,3 +203,32 @@ Ended up deleting every model except `mistral-7b-v0.2` and
 - freed about 10GB using `model.remove_from_cache()` from the SDK instead
 of just deleting the folders by hand, so Foundry Local's own cache index
 stays consistent.
+
+## Week 5
+
+**A "does it answer or decline" test is not the same as "is the answer
+correct."** Wrote `tests.py` with 9 questions (6 answerable from the docs,
+3 deliberately out of scope) and checked automatically whether each one got
+answered or declined. First run: 8/9 passed, one flagged as a failure -
+"What's the best programming language?" was supposed to be declined, and
+the model actually did decline it, just in its own words ("I don't have
+enough context...") instead of matching our fixed fallback string exactly.
+The test script's check was too strict (exact string match), not the RAG
+system - fixed by checking for a handful of common decline phrases instead
+of one exact string.
+
+**A more interesting problem showed up in a test that "passed."** Asked
+"What practices make vibe coding safer?" - the model said the context
+didn't mention any such practices. But it does, almost word for word: the
+document has a whole paragraph starting "A few practices make both
+approaches safer in practice..." Checked `retrieval.py` directly and found
+why - that paragraph ranked 7th out of the document's 9 chunks (score
+0.575), well outside `top_k=3`. Chunks about vibe coding's risks and
+general description outranked it, probably because they're topically
+closer to the surface wording of the question, even though the "practices"
+paragraph is the one that actually answers it. Our pass/fail test doesn't
+catch this at all, because it only checks "did it answer or decline," not
+whether the answer used the right source. A test suite like this can say
+9/9 and still be missing real quality problems - it's a floor, not a
+guarantee. Possible fixes for later: raise `top_k`, or check retrieved
+content against expected keywords instead of just answerable/not.

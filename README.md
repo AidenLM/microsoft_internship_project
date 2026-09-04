@@ -20,7 +20,7 @@ Week 1 - setting up Foundry Local and the project skeleton.
 - [x] Retrieval function (top-k relevant chunks for a query)
 - [x] LLM integration (answer_query)
 - [x] CLI interface
-- [ ] Test cases + docs
+- [x] Test cases + docs
 
 ## Setup
 
@@ -91,6 +91,21 @@ project plan returns the two paragraphs that directly define RAG, both
 above 0.79 similarity. Same with the vibe coding doc - "difference between
 vibe coding and agentic coding" scores above 0.90 against the paragraph
 that actually explains that distinction.
+
+## Testing
+
+`tests.py` runs a fixed set of questions (some answerable from `docs/`,
+some deliberately out of scope) and checks whether the assistant answered
+or correctly declined:
+
+```bash
+python tests.py
+```
+
+Currently 9/9 pass. Worth noting this only checks *whether* it declined,
+not whether an answer's content is fully correct - see `LEARNINGS.md` for a
+case where retrieval missed the best chunk but the model still technically
+"answered."
 
 ## Reference
 
