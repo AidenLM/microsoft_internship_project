@@ -7,7 +7,7 @@ from foundry_local_sdk import (
     TextItemType,
 )
 
-MODEL_ALIAS = "qwen3-4b"
+MODEL_ALIAS = "mistral-7b-v0.2"
 
 
 def load_model(manager):

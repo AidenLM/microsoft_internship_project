@@ -42,12 +42,12 @@ Once it's installed, run:
 python main.py
 ```
 
-This drops you into a simple chat loop with `qwen3-4b` running locally -
-type a question, get an answer, `exit` to quit. Started out testing with
-qwen3-0.6b since it's tiny and fast, but the answers were noticeably worse
-(got basic facts wrong). qwen3-4b is close in size to phi-3.5-mini and
-gives much better answers without issues on this machine, so that's the
-default for now.
+This drops you into a simple chat loop with `mistral-7b-v0.2` running
+locally - type a question, get an answer, `exit` to quit. Went through a
+few sizes here: qwen3-0.6b was fast but got basic facts wrong, qwen3-4b
+was noticeably better, mistral-7b-v0.2 (~7B, ~4.2GB on disk) gives the
+best answers so far and still runs comfortably - a few seconds per
+response, no memory issues.
 
 ## Why Foundry Local + SQLite
 
