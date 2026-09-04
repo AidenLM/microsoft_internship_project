@@ -80,3 +80,17 @@ question.
 Each sentence became a vector of 1024 numbers (`shape=[1024]`), returned as
 raw float32 bytes from the SDK - had to unpack it with `numpy.frombuffer`
 to get actual floats out.
+
+**Why cosine similarity and not something like sine.** Cosine similarity is
+the cosine of the angle between two vectors: `cos(θ) = (A·B) / (|A|·|B|)`.
+The range it produces is exactly what you want for "how similar":
+- angle = 0° (vectors point the same direction, i.e. same meaning) -> cos = 1
+- angle = 90° (unrelated) -> cos = 0
+- angle = 180° (opposite meaning) -> cos = -1
+
+Sine would give the opposite of what's useful here: sin(0°) = 0 (identical
+vectors would score as "not similar at all") and sin(90°) = 1 (unrelated
+vectors would score as "maximally similar"). Backwards. Cosine similarity
+also only cares about the *direction* of the vectors, not their length/
+magnitude - which is what we want, since we care about the direction of
+the meaning, not how "strong" the raw vector happens to be.
