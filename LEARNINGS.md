@@ -176,3 +176,30 @@ and agentic coding" scored 0.90-0.91 similarity and got a correct, well
 grounded answer - actually higher scores than we saw on the project plan
 document. Good sign that the pipeline isn't overfit to one specific piece
 of text.
+
+**Chat models tested, sorted by RAM usage (highest to lowest).** Only
+phi-3.5-mini's memory use was actually measured directly (watched RSS climb
+to ~4.4GB in real time before it got killed). The rest are estimated from
+on-disk model size using that same ratio (~1.7x file size), since later RSS
+monitoring attempts had a bug and gave flat, clearly-wrong readings - so
+treat these as ballpark, not measured:
+
+| Model | Disk size | Est. RAM while answering | Result |
+|---|---|---|---|
+| qwen3-8b | 5.8 GB | ~9.9 GB (never finished testing) | stopped early, too much for this machine |
+| mistral-7b-v0.2 | 4.2 GB | ~7.1 GB (estimate) | **current default** - best answers so far |
+| qwen3-4b | 2.8 GB | ~4.7 GB (estimate) | worked, decent answers, replaced by Mistral |
+| phi-3.5-mini | 2.6 GB | ~4.4 GB (measured) | kept getting killed - turned out to be unrelated system issues, never got a clean run |
+| smollm3-3b | 2.1 GB | ~3.6 GB (estimate) | worked, but gave a wrong/hallucinated answer to a test question |
+| qwen3-1.7b | 1.4 GB | ~2.3 GB (estimate) | worked, but also gave a wrong answer to the same test question |
+| qwen3-0.6b | 0.6 GB | ~1.0 GB (estimate) | fastest, but got basic facts wrong - too small to trust |
+
+`qwen3-embedding-0.6b` (511 MB) isn't in this table since it's a separate
+embeddings-task model, not a chat model - it's not answering questions, so
+comparing it on "answer quality" doesn't apply the same way.
+
+Ended up deleting every model except `mistral-7b-v0.2` and
+`qwen3-embedding-0.6b` (the two actually in use) once disk space got tight
+- freed about 10GB using `model.remove_from_cache()` from the SDK instead
+of just deleting the folders by hand, so Foundry Local's own cache index
+stays consistent.
