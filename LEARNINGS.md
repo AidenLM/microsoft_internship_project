@@ -55,3 +55,28 @@ few models to find a workable size:
 
 Went with `mistral-7b-v0.2` as the default chat model, `qwen3-embedding-0.6b`
 planned for embeddings in Week 2.
+
+## Week 2
+
+**Seeing an actual embedding made the "similarity" idea click.** Ran
+`qwen3-embedding-0.6b` on a few test sentences and compared them with cosine
+similarity:
+
+```
+"The cat sat on the mat."  vs  "A feline was resting on the rug."   -> 0.73
+"The cat sat on the mat."  vs  "The stock market crashed yesterday." -> 0.35
+```
+
+The first pair shares basically no words in common ("cat"/"feline",
+"mat"/"rug", "sat"/"resting") but scored high, because the *meaning* is the
+same. The second pair scored low because it's actually unrelated. That's the
+whole point of using embeddings for retrieval instead of plain keyword
+matching - the model is comparing meaning, not exact word overlap. This is
+the mechanism RAG relies on: embed the user's question, compare it against
+every stored document chunk's embedding, and pull back whichever chunks
+score highest - regardless of whether they share any literal words with the
+question.
+
+Each sentence became a vector of 1024 numbers (`shape=[1024]`), returned as
+raw float32 bytes from the SDK - had to unpack it with `numpy.frombuffer`
+to get actual floats out.
