@@ -136,3 +136,33 @@ blank lines - not worth embedding on their own). Didn't need any fancier
 splitting logic for a document this size, though a longer document without
 clear paragraph breaks would probably need real sentence/token-based
 chunking instead.
+
+## Week 4
+
+**Mistral's chat template doesn't support a system role at all.** Tried
+sending the retrieved context as a system message (`MessageItem.system`)
+and it failed with an actual error from the model's own prompt template:
+"Only user and assistant roles are supported!" Mistral-7B-Instruct's
+template only knows `[INST] ... [/INST]` for user turns and plain text for
+assistant turns - no separate system slot. Fix was to just fold the
+instructions + context + question into one big user message instead of
+using a system role. Different chat models have different templates baked
+in, so what "roles" are even available isn't universal - worth checking
+before assuming a model supports system messages.
+
+**Telling the model "say you don't know if it's not in the context" is not
+enough on its own.** Asked "What is the capital of Japan?" (nothing to do
+with our document) and even though the prompt explicitly said not to guess,
+the model answered "Tokyo" anyway, using its own general knowledge instead
+of the (irrelevant) retrieved context. The retrieval step actually did its
+job correctly here - the similarity scores for that question were only
+~0.38-0.39, way below the ~0.77-0.83 we see for genuinely relevant
+questions - but the *prompt instruction alone* wasn't enough to stop the
+model from answering anyway.
+
+Fixed it by adding a hard cutoff in code (`MIN_SIMILARITY = 0.5`): if the
+best retrieved chunk scores below that, skip calling the model entirely and
+return a fixed "I don't have information about that" message. This is more
+reliable than relying on the model to police itself. Lesson: for anything
+where wrong answers actually matter, don't just trust an instruction in the
+prompt - add an explicit check in code wherever you can.

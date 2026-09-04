@@ -18,8 +18,8 @@ Week 1 - setting up Foundry Local and the project skeleton.
 - [x] Embeddings + SQLite storage
 - [x] Ingestion pipeline (chunking + embedding + storing documents)
 - [x] Retrieval function (top-k relevant chunks for a query)
-- [ ] LLM integration (answer_query)
-- [ ] CLI interface
+- [x] LLM integration (answer_query)
+- [x] CLI interface
 - [ ] Test cases + docs
 
 ## Setup
@@ -42,12 +42,17 @@ Once it's installed, run:
 python main.py
 ```
 
-This drops you into a simple chat loop with `mistral-7b-v0.2` running
-locally - type a question, get an answer, `exit` to quit. Went through a
-few sizes here: qwen3-0.6b was fast but got basic facts wrong, qwen3-4b
-was noticeably better, mistral-7b-v0.2 (~7B, ~4.2GB on disk) gives the
-best answers so far and still runs comfortably - a few seconds per
-response, no memory issues.
+This drops you into a chat loop that answers from `docs/` - each question
+gets embedded, matched against the stored document chunks, and the top
+matches get passed to `mistral-7b-v0.2` as context before it answers.
+`exit` to quit. Went through a few chat model sizes to land on Mistral:
+qwen3-0.6b was fast but got basic facts wrong, qwen3-4b was noticeably
+better, mistral-7b-v0.2 (~7B, ~4.2GB on disk) gives the best answers so far
+and still runs comfortably - a few seconds per response, no memory issues.
+
+Run `python ingest.py` first if `documents.db` doesn't exist yet (or if
+`docs/` changed) - `main.py` reads from that database, it doesn't ingest
+documents itself.
 
 ## Why Foundry Local + SQLite
 
