@@ -232,3 +232,24 @@ whether the answer used the right source. A test suite like this can say
 9/9 and still be missing real quality problems - it's a floor, not a
 guarantee. Possible fixes for later: raise `top_k`, or check retrieved
 content against expected keywords instead of just answerable/not.
+
+**Raising `top_k` to fix a missing chunk can make things worse before it
+makes them better.** Tried `top_k=5` first for the "safer practices"
+question - still didn't include the paragraph (it was ranked 7th, top_k=5
+only reaches rank 5). The model's response changed, but not for the
+better: instead of correctly declining, it now confidently answered with a
+list of practices that sound reasonable (code reviews, CI/CD, code
+analysis tools) but aren't in our document at all - it filled the gap with
+its own general knowledge. That's arguably worse than declining, since it's
+a fabricated answer that looks legitimate. Only `top_k=7` (which actually
+included the correct chunk, ranked 7th at score 0.575) got the real
+answer: "reading the diff before accepting a change, running tests,
+keeping changes small and reviewable, and using version control" - a
+direct match to the document.
+
+Lesson: a partial fix to retrieval isn't safe just because it changes the
+symptom. Giving the model *some* extra context without the *right* context
+just gave it more room to guess confidently instead of admitting it didn't
+know - the opposite of what RAG is supposed to prevent. Went with
+`top_k=7` as the new default after confirming it actually retrieves the
+right chunk, not just because a bigger number seemed safer.

@@ -8,6 +8,7 @@ DECLINE_PHRASES = (
     "don't have information",
     "don't have enough",
     "not mentioned in the context",
+    "no mention of",
     "doesn't mention",
     "not in the context",
     "no information",

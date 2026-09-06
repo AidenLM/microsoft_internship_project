@@ -16,10 +16,13 @@ MODEL_ALIAS = "mistral-7b-v0.2"
 # ones during testing, so 0.5 sits comfortably between the two.
 MIN_SIMILARITY = 0.5
 NO_ANSWER = "I don't have information about that in my documents."
+TOP_K = 7
 
 PROMPT_TEMPLATE = """Answer the question using only the context below.
 If the answer isn't in the context, say you don't know instead of guessing.
-Keep the answer short.
+Keep the answer short. Answer in the same language as the question, even
+if the context below is in a different language - do not mix languages or
+add a translation.
 
 Context:
 {context}
@@ -47,7 +50,7 @@ def extract_answer(message):
 
 
 def answer_query(manager, chat_model, question):
-    chunks = get_top_chunks(manager, question, top_k=3)
+    chunks = get_top_chunks(manager, question, top_k=TOP_K)
 
     if not chunks or chunks[0][0] < MIN_SIMILARITY:
         return NO_ANSWER, chunks
