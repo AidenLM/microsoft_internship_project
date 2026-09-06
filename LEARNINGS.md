@@ -253,3 +253,17 @@ just gave it more room to guess confidently instead of admitting it didn't
 know - the opposite of what RAG is supposed to prevent. Went with
 `top_k=7` as the new default after confirming it actually retrieves the
 right chunk, not just because a bigger number seemed safer.
+
+**"top-k" means two different things in AI, easy to mix up.** What we're
+using is top-k *retrieval* (sometimes called k-nearest-neighbor search):
+rank every stored chunk by similarity to the question, keep the best k. It
+has nothing to do with words or word count - it's about which chunks get
+included as context.
+
+There's a separate, unrelated concept called top-k *sampling*: when a chat
+model generates its answer word by word, it can restrict its choice of the
+next word to only the k most likely candidates before picking one. That's
+a setting for text generation, not retrieval, and it's not something we
+touched - Mistral handles that internally with its own defaults. Same name,
+same rough idea ("only consider the best k"), but applied in two completely
+different parts of the pipeline.
