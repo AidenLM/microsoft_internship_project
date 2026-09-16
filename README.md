@@ -9,6 +9,10 @@ guessing.
 Everything runs on-device, no API keys or internet connection needed at
 inference time.
 
+## Demo
+
+Short video walkthrough: https://drive.google.com/file/d/1thAj3A7ZRcWPl-1Gwxd8kjtfMFPNSsjM/view?usp=sharing
+
 ## Status
 
 Week 1 - setting up Foundry Local and the project skeleton.
